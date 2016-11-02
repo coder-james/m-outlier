@@ -10,10 +10,10 @@ DATA_DIR="data"
 OUTPUT_DIR="output"
 
 """mysql configuration"""
-mysql_ipaddr="10.31.73.48"
-mysql_user="hue_user"
-mysql_pwd="hue_test"
-mysql_db="hue"
+mysql_ipaddr="xxxx"
+mysql_user="xxxuser"
+mysql_pwd="xxxtest"
+mysql_db="xxx"
 
 """High Contrast Subspace"""
 iteration=100
