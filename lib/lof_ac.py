@@ -38,8 +38,8 @@ class LOF():
         #distance,indices_k = self.sci_kneighbors(data)
         print "sikit-learn k neighbors"
         distance,indices_k = self.skl_kneighbors(data)
-        print distance[0]
-        print indices_k[0]
+        #print distance[0]
+        #print indices_k[0]
         # k distance
         t4 = time()
         print "--- %.4f s" % (t4 - t3)

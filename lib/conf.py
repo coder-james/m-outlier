@@ -10,14 +10,18 @@ DATA_DIR="data"
 OUTPUT_DIR="output"
 
 """mysql configuration"""
-mysql_ipaddr="xxxx"
-mysql_user="xxxuser"
-mysql_pwd="xxxtest"
-mysql_db="xxx"
+mysql_ipaddr=""
+mysql_user="hue_user"
+mysql_pwd="hue_test"
+mysql_db="hue"
+
+"""lof"""
+lof_threshold=4
 
 """High Contrast Subspace"""
 iteration=100
 #Choose [Kolmogorov-Smirnov or Welch] Test to compute
 test="kolmo" #welch
-p_threshold=0.5
-pearson_threshold=0.4
+#test="welch" #welch
+p_threshold=0.75
+pearson_threshold=0.5

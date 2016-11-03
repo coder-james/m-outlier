@@ -40,11 +40,11 @@ def selection(df):
        v = random.randint(0, (len(subspaces[0]) - 1))
        rest = list(set(subspaces[0]) - set([subspaces[0][v]]))
        if conf.test == "kolmo":
-       """Kolmogorov-Smirnov test"""
+         """Kolmogorov-Smirnov test"""
          k = stats.ks_2samp(df[subspaces[0][v]].values, df[((index_df[rest] < uband) & \
                 (index_df[rest] > lband)).all(axis = 1)][subspaces[0][v]].values)
-       """Welch T-test"""
        elif conf.test == "welch":
+         """Welch T-test"""
          k = stats.ttest_ind(df[subspaces[0][v]].values, df[((index_df[rest] < uband) & \
                 (index_df[rest] > lband)).all(axis = 1)][subspaces[0][v]].values)
        pvalue = k.pvalue
@@ -75,10 +75,14 @@ def p_selection(df):
   selection=[]
   while(len(subspaces)>0):
     if subspaces[0] not in tested:
-      """Pearson correlation"""
-      cor, pvalue = stats.pearsonr(df[subspaces[0][0]].values, df[subspaces[0][1]].values)
-      if abs(pvalue) > conf.pearson_threshold:
-        selection.append(subspaces[0])
+      if df[subspaces[0][0]].values.var() == 0 or df[subspaces[0][1]].values.var() == 0:
+        pass
+      else:
+        """Pearson correlation"""
+        cor, pvalue = stats.pearsonr(df[subspaces[0][0]].values, df[subspaces[0][1]].values)
+        if abs(pvalue) > conf.pearson_threshold:
+          print pvalue
+          selection.append(subspaces[0])
       tested.append(subspaces[0])
       subspaces.pop(0)
     else:
