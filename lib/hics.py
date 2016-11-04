@@ -49,21 +49,20 @@ def selection(df):
                 (index_df[rest] > lband)).all(axis = 1)][subspaces[0][v]].values)
        pvalue = k.pvalue
        if not(np.isnan(pvalue)):
-         pvalue_Total = pvalue_Total + pvalue
+         pvalue_Total += pvalue
          pvalue_cnt += 1
      if pvalue_cnt > 0:
        avg_pvalue = pvalue_Total / pvalue_cnt
-       print avg_pvalue
      if (1.0 - avg_pvalue) > conf.p_threshold:
+       print "subspaces %s, pvalue %s" %(subspaces[0],avg_pvalue)
        selection.append(subspaces[0])
        subspaces = subspaces + subGenerator(subspaces[0], df.columns, (len(subspaces[0]) + 1))
      tested.append(subspaces[0])
      subspaces.pop(0)
-     #subspaces = [list(t) for t in set(map(tuple, subspaces))]
+     subspaces = [list(t) for t in set(map(tuple, subspaces))]
    else:
      subspaces.pop(0)
-
-   return selection
+  return selection
 
 def p_selection(df):
   """get selected subspaces.
@@ -79,9 +78,9 @@ def p_selection(df):
         pass
       else:
         """Pearson correlation"""
-        cor, pvalue = stats.pearsonr(df[subspaces[0][0]].values, df[subspaces[0][1]].values)
-        if abs(pvalue) > conf.pearson_threshold:
-          print pvalue
+        cor, p = stats.pearsonr(df[subspaces[0][0]].values, df[subspaces[0][1]].values)
+        if abs(cor) > conf.pearson_threshold:
+          #print cor
           selection.append(subspaces[0])
       tested.append(subspaces[0])
       subspaces.pop(0)

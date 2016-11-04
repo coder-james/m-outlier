@@ -13,17 +13,18 @@ import numpy as np
 from time import time
 
 inputfile="data_10mon.txt"
-outputfile="data_10mon_filter.txt"
-normfile="data_norm_filter.txt"
-savefile="output_norm.csv"
-redfile="data_red_filter.txt"
+outputfile="data_10mon_filter.csv"
+normfile="data_norm_filter.csv"
+savefile="output.csv"
+normsavefile="output_norm.csv"
 lof_file="lof_value.txt"
+norm_lof_file="lof_value_norm.txt"
 nomial_list=["app_id","app_name","job_id","stage_id","create_time", "spark_scheduler_mode", \
 	   "spark_streaming_internal_batch_time","stage_name","stage_attempt_id", "app_attempt_id"]
 manual_list=["app_start_time","app_finish_time"]
 same_=["duration","jvm_gc_time","result_serialization_time","getting_result_time","executor_deserialize_time","scheduler_delay"]
-#suffix=["_min","_25th_percentile","_median","_75th_percentile","_95th_percentile","_99th_percentile","_max"]
-suffix=["_25th_percentile","_median","_75th_percentile","_95th_percentile","_99th_percentile"]
+suffix=["_sum","_variance","_min","_25th_percentile","_median","_75th_percentile","_95th_percentile","_99th_percentile","_max"]
+#suffix=["_sum","_25th_percentile","_median","_75th_percentile","_95th_percentile","_99th_percentile"]
 
 def getvecs(filename):
   with open(os.path.join(conf.DATA_DIR, filename)) as inputf:
@@ -33,7 +34,7 @@ def getvecs(filename):
     vectors = lines[1:,1:]
   return indices,ids,vectors
 
-def process(method="kmeans",filename=None):
+def process(method="kmeans",filename=None,loffile=None):
   indices,ids,vectors = getvecs(filename)
   nums = ids.shape[0]
   t1 = time()
@@ -42,16 +43,16 @@ def process(method="kmeans",filename=None):
   if method == "kmeans":
     kmeans(vectors)
   elif method == "lof":
-    lof(k, vectors)
+    lof(k, vectors, loffile)
     #lof_one(k, indices, vectors)
   print "%s s --- %s compute %s records" %(time() - t1, method, nums)
 
-def lof(k, vectors):
+def lof(k, vectors, loffile):
   """local outlier factor sample 
      compute all dimension
   """
   m = LOF(k, include=False)
-  with open(os.path.join(conf.OUTPUT_DIR, lof_file), "w") as loff:
+  with open(os.path.join(conf.OUTPUT_DIR, loffile), "w") as loff:
       lofs = m.fit(vectors)
       content = ""
       for value in lofs:
@@ -161,31 +162,17 @@ def examine(filename):
     
 
 if __name__ == "__main__":
-  filename = normfile
-  filter(filename, norm=True)
-  """
-  0.662287950516 s --- 100 cols filter and manual rest 57 and final rest 33
-  """
+  norm = True
+  if norm:
+    filename = normfile
+    lof_filename = norm_lof_file
+    save_filename = normsavefile
+  else:
+    filename = outputfile
+    lof_filename = lof_file
+    save_filename = savefile
+  filter(filename, norm=norm)
   examine(filename)
-  #indices,ids,vectors = getvecs(outputfile)
-  #dic = {name:i for i,name in enumerate(indices)}
-  #index = dic["spark_scheduler_mode"]
-  #vec = vectors[:,index]
-  #value = set({})
-  #for v in vec:
-  #  value.add(v)
-  #print value
-  process(method="lof", filename=filename)
+  process(method="lof", filename=filename, loffile=lof_filename)
   #check(lof_file, outputfile)
-  rate(lof_file, inputfile, savefile)
-  """
-  scipy k neighbors    |    sikit-learn k neighbors
-  --- 212.6442 s       |    --- 3.7189 s
-  lof function...k distances
-  --- 0.7437 s
-  lof function...local reachability density
-  --- 1.0844 s
-  lof function...lof value compute
-  --- 0.3548 s
-  217.646481037 s --- lof compute 
-  """
+  rate(lof_filename, inputfile, save_filename)

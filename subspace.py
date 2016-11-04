@@ -16,7 +16,6 @@ import pandas as pd
 
 inputfile="data_red_filter.csv"
 inputfile="data_10mon_filter.csv"
-inputfile="data_norm_filter.csv"
 lof_file="lof_value.txt"
 
 def getDataFrame():
@@ -31,16 +30,16 @@ def process():
   t1 = time()
   """get all selected subspaces based on high contrast subspace"""
   #Kolmogorov_Smirnor / Welch Test
-  subspaces = hics.selection(df.iloc[:,1:])
+  #subspaces = hics.selection(df.iloc[:,1:])
   #Pearson
-  #subspaces = hics.p_selection(df.iloc[:,1:])
+  subspaces = hics.p_selection(df.iloc[:,1:])
   col = {}
   for spaces in subspaces:
     for item in spaces:
       if item in col:
         col[item]+=1
       else:
-        col[item]=0
+        col[item]=1
   print col
   print subspaces
   print len(subspaces)
