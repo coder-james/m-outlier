@@ -23,5 +23,15 @@ iteration=50
 #Choose [Kolmogorov-Smirnov or Welch] Test to compute
 test="kolmo" #welch
 #test="welch" #welch
-p_threshold=0.9
+p_threshold=0.99
 pearson_threshold=0.9
+
+
+def get_index(tablename):
+  with open("lib/indexes") as indexfile:
+    content = indexfile.read().split("\n")
+    dics = {line.split(":")[0]:line.split(":")[1].split(";") for line in content if len(line) > 0}
+    if tablename in dics:
+      return dics[tablename]
+    else:
+      return None

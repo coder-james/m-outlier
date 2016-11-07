@@ -133,11 +133,11 @@ def check(lofname, filename):
         content += "%-12s" % outlier[j]
       print content
 
-def rate(lofname, filename, savefile):
+def rate(lofname, savefile):
   """relist all sample by lof value"""
   with open(os.path.join(conf.OUTPUT_DIR, lofname)) as loff:
     lines = np.array([float(line) for line in loff.read().split(";") if len(line) > 0])
-  with open(os.path.join(conf.DATA_DIR, inputfile)) as inputf:
+  with open(os.path.join(conf.DATA_DIR, outputfile)) as inputf:
     ilines = [line for line in inputf.read().split("\n") if len(line) > 0]
   with open(os.path.join(conf.OUTPUT_DIR, savefile), "w") as sfile:
     lofs = sorted([[i, score] for i,score in enumerate(lines)],key=lambda item:item[1],reverse=True)
@@ -175,4 +175,4 @@ if __name__ == "__main__":
   examine(filename)
   process(method="lof", filename=filename, loffile=lof_filename)
   #check(lof_file, outputfile)
-  rate(lof_filename, inputfile, save_filename)
+  rate(lof_filename, save_filename)
