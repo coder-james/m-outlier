@@ -8,6 +8,8 @@
 
 DATA_DIR="data"
 OUTPUT_DIR="output"
+filter_prefix="data_"
+filter_suffix="_filter.csv"
 
 """mysql configuration"""
 mysql_ipaddr="10.31.73.48"
@@ -35,3 +37,11 @@ def get_index(tablename):
       return dics[tablename]
     else:
       return None
+
+def get_k(tablename):
+  if tablename == "spark_task_metrics_summary":
+    return 100
+  elif tablename == "hdfs_audit":
+    return 1100
+  elif tablename == "job_metrics_summary":
+    return 50
