@@ -2,4 +2,5 @@ numpy
 scipy
 sikit-learn
 itertools
+#optional
 pandas
