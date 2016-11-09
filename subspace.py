@@ -14,25 +14,22 @@ from time import time
 import lib.hics as hics
 import pandas as pd
 
-inputfile="data_red_filter.csv"
-inputfile="data_10mon_filter.csv"
-lof_file="lof_value.txt"
-
-def getDataFrame():
+def getDataFrame(inputfile):
   """read csv to get dataframe using pandas"""
   filepath = os.path.join(conf.DATA_DIR, inputfile)
   df = pd.read_csv(filepath)
   return df
 
-def process():
-  df = getDataFrame()
+def process(inputfile):
+  df = getDataFrame(inputfile)
   #nums = ids.shape[0]
+  print list(df.columns)
   t1 = time()
   """get all selected subspaces based on high contrast subspace"""
   #Kolmogorov_Smirnor / Welch Test
-  #subspaces = hics.selection(df.iloc[:,1:])
+  subspaces = hics.selection(df.iloc[:,1:])
   #Pearson
-  subspaces = hics.p_selection(df.iloc[:,1:])
+  #subspaces = hics.p_selection(df.iloc[:,1:])
   col = {}
   for spaces in subspaces:
     for item in spaces:
@@ -58,24 +55,9 @@ def hics_lof(k, vectors):
     for value in lofs:
       content += "%.3f;" % value
     loff.write(content[:-1])
-  
-def check():
-  """check lof value to tune"""
-  with open(os.path.join(conf.OUTPUT_DIR, lof_file)) as loff:
-    lines = np.array([float(line) for line in loff.read().split(";") if len(line) > 0])
-    threshold = 4
-    subs = lines > threshold
-    indices, ids, vectors = getvecs()
-    outliers = []
-    for i,isoutlier in enumerate(subs):
-      if isoutlier:
-        outliers.append(vectors[i])
-    for j,name in enumerate(indices):
-      content = "%-35s" % name
-      for outlier in outliers:
-        content += "%-10s" % outlier[j]
-      print content
 
 if __name__ == "__main__":
-  process()
-  #check()
+  #inputfile = "data_spark_task_metrics_summary_filter.csv"
+  inputfile = "data_hdfs_audit_filter.csv"
+  #inputfile = "data_job_metrics_summary_filter.csv"
+  process(inputfile)
