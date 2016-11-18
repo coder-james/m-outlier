@@ -13,9 +13,10 @@ from time import time
 from sklearn.neighbors import NearestNeighbors
 
 class LOF():
-    def __init__(self, k, include=True):
+    def __init__(self, k, include=True, log=True):
 	self.include = include
 	self.k = k
+        self.log = log
   
     def skl_kneighbors(self, data):
         add = 1 if not self.include else 0
@@ -36,36 +37,45 @@ class LOF():
         t3 = time()
         #print "scipy k neighbors"
         #distance,indices_k = self.sci_kneighbors(data)
-        print "sikit-learn k neighbors"
+        if self.log: print "sikit-learn k neighbors"
         distance,indices_k = self.skl_kneighbors(data)
         #print distance[0]
         #print indices_k[0]
         # k distance
         t4 = time()
-        print "--- %.4f s" % (t4 - t3)
-        print "lof function...k distances"
+        if self.log: print "--- %.4f s" % (t4 - t3)
+        if self.log: print "lof function...k distances"
         kdist = np.zeros(len(data))
         for i in range(data.shape[0]):
             #kneighbours = distance[i, indices_k[i, :]]
             #kdist[i] = kneighbours.max()
             kdist[i] = distance[i][-1]
         t5 = time()
-        print "--- %.4f s" % (t5 - t4)
-        print "lof function...local reachability density"
+        if self.log: print "--- %.4f s" % (t5 - t4)
+        if self.log: print "lof function...local reachability density"
         lrd = np.zeros(len(data))
         for i in range(data.shape[0]):
             #lrd[i] = 1/np.maximum(kdist[indices_k[i, :]], distance[i, indices_k[i, :]]).mean()
-            lrd[i] = 1/np.maximum(kdist[indices_k[i]], distance[i]).mean()
+            below = np.maximum(kdist[indices_k[i]], distance[i]).mean()
+            if below == 0:
+              lrd[i] = float("inf")
+            else:
+              lrd[i] = 1 / below
         # lof
         t6 = time()
-        print "--- %.4f s" % (t6 - t5)
-        print "lof function...lof value compute"
+        if self.log: print "--- %.4f s" % (t6 - t5)
+        if self.log: print "lof function...lof value compute"
         lof = np.zeros(len(data))
         for i in range(data.shape[0]):
             #lof[i] = lrd[indices_k[i, :]].mean()/lrd[i]
-            lof[i] = lrd[indices_k[i]].mean()/lrd[i]
+            top = lrd[indices_k[i]].mean()
+            down = lrd[i]
+            if top == float("inf") and down == float("inf"):
+              lof[i] = 1
+            else:
+              lof[i] = top / down
             #print data[i],lof[i]
-        print "--- %.4f s" % (time() - t6) 
+        if self.log: print "--- %.4f s" % (time() - t6) 
 	return lof
 
 if __name__ == "__main__":
