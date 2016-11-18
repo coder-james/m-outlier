@@ -103,7 +103,7 @@ def save(results, cols, tablenames):
   
 if __name__ == "__main__":
   tablenames = ["spark_task_metrics_summary"]
-  #fetch(tablenames)
+  fetch(tablenames)
   """16 10.1 - 11.1 get 15460 records"""
   tablenames = ["hdfs_audit"]
   #fetch(tablenames)

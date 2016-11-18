@@ -39,9 +39,9 @@ def get_list(inputname):
       useless_list.append(name)
   return tablename,useless_list
 
-def getvecs(filename):
+def getvecs(filename, directory=conf.DATA_DIR):
   """transform file to vectors"""
-  with open(os.path.join(conf.DATA_DIR, filename)) as inputf:
+  with open(os.path.join(directory, filename)) as inputf:
     lines = np.array([np.array(line.split(",")) for line in inputf.read().split("\n") if len(line) > 0])
     indices = lines[0,1:]
     ids = lines[1:,0]

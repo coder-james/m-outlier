@@ -10,6 +10,8 @@ DATA_DIR="data"
 OUTPUT_DIR="output"
 filter_prefix="data_"
 filter_suffix="_filter.csv"
+rank_suffix="_output.csv"
+exploit_suffix="_exploit.txt"
 
 """mysql configuration"""
 mysql_ipaddr="10.31.73.48"

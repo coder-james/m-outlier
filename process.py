@@ -75,14 +75,14 @@ def lof_one(k, indices, vectors):
 #        content += "%-12s" % outlier[j]
 #      print content
 
-def rate(lofname, outputfile):
+def rank(lofname, outputfile):
   tablename = lofname[:-8]
   """relist all sample by lof value"""
   with open(os.path.join(conf.OUTPUT_DIR, lofname)) as loff:
     lines = np.array([float(line) for line in loff.read().split(";") if len(line) > 0])
   with open(os.path.join(conf.DATA_DIR, outputfile)) as inputf:
     ilines = [line for line in inputf.read().split("\n") if len(line) > 0]
-  with open(os.path.join(conf.OUTPUT_DIR, tablename+"_output.csv"), "w") as sfile:
+  with open(os.path.join(conf.OUTPUT_DIR, tablename + conf.rank_suffix), "w") as sfile:
     lofs = sorted([[i, score] for i,score in enumerate(lines)],key=lambda item:item[1],reverse=True)
     sfile.write(ilines[0] + ",lof\n")
     for tup in lofs:
@@ -101,11 +101,11 @@ def examine(filename):
     
 
 if __name__ == "__main__":
-  #inputfile = "data_spark_task_metrics_summary.txt"
+  inputfile = "data_spark_task_metrics_summary.txt"
   #inputfile = "data_hdfs_audit.txt"
-  inputfile = "data_job_metrics_summary.txt"
+  #inputfile = "data_job_metrics_summary.txt"
   norm = False
   filename = pre.filter(inputfile, norm)
-  examine(filename)
+  #examine(filename)
   loffile = process(method="lof", filename=filename)
-  rate(loffile, filename)
+  rank(loffile, filename)
